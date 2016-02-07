@@ -25,6 +25,7 @@ charImage.src = PathToCharacter;  // source image location set in constants.js
 //var audio = new Audio();
 var audioWilhelm = new Audio('audio/Wilhelm.mp3');
 var audioMaybe = new Audio('audio/TheInkSpots-Maybe.mp3');
+var audioDream = new Audio('audio/LouisArmstrong-AKissToBuildADreamOn.mp3');
 //audio.ready = false;
 //audio.onload = setAssetReady;
 //audio.src = 'audio/Wilhelm.mp3';
@@ -100,8 +101,8 @@ var deathclawSpriteX2 = 136;
 var deathclawSpriteY2 = 253;
 var deathclawHeight = 90;
 var deathclawWidth = 136;
-var deathclawCurrentX = 600;
-var deathclawCurrentY = -150;
+var deathclawCurrentX = 1000;
+var deathclawCurrentY = -650;
 var deathclawSpriteX = deathclawSpriteX1;
 var deathclawSpriteY = deathclawSpriteY1;
 
@@ -111,6 +112,9 @@ var musicBoxHeight = 39;
 var musicBoxWidth = 39;
 var musicBox1CurrentX = 400;
 var musicBox1CurrentY = 300;
+
+var musicBox2CurrentX = 200;
+var musicBox2CurrentY = 200;
 
 var deadSpriteX = 0;
 var deadSpriteY = 382;//375;
@@ -394,10 +398,13 @@ function deathByDeathclaw(){
 function moveMusicBox(){
 	musicBox1CurrentX = musicBox1CurrentX - characterSpeed;
 	musicBox1CurrentY = musicBox1CurrentY + characterSpeed;
+	musicBox2CurrentX = musicBox2CurrentX - characterSpeed;
+	musicBox2CurrentY = musicBox2CurrentY + characterSpeed;
 }
 
 
 var musicBox1Active = true;
+var musicBox2Active = true;
 var deathclawActive = true;
 var playerAlive = true;
 var deathSound = true;
@@ -466,17 +473,33 @@ function update()
 	if(musicBox1Active == true){
 		ctx.drawImage(charImage, musicBoxSpriteX, musicBoxSpriteY, musicBoxWidth, musicBoxHeight, 
 				musicBox1CurrentX, musicBox1CurrentY, musicBoxWidth, musicBoxHeight);
-		if(playerAlive == true)
-			moveMusicBox();
 	}
+	
+	if(musicBox2Active == true){
+		ctx.drawImage(charImage, musicBoxSpriteX, musicBoxSpriteY, musicBoxWidth, musicBoxHeight, 
+				musicBox2CurrentX, musicBox2CurrentY, musicBoxWidth, musicBoxHeight);
+	}
+	
+	if(playerAlive == true)
+		moveMusicBox();
 	
 	
 	if(((musicBox1CurrentX + musicBoxWidth) >= (characterCurrentX)) && 
 			((musicBox1CurrentX <= characterCurrentX + CharacterWidth)) &&
 			((musicBox1CurrentY + musicBoxHeight) >= (characterCurrentY) ) &&
 			((musicBox1CurrentY <= characterCurrentY + CharacterHeight ))){
-		audioMaybe.play();
+		//audioMaybe.play();
+		audioDream.play();
 		musicBox1Active = false;	
+	}
+	
+	if(((musicBox2CurrentX + musicBoxWidth) >= (characterCurrentX)) && 
+			((musicBox2CurrentX <= characterCurrentX + CharacterWidth)) &&
+			((musicBox2CurrentY + musicBoxHeight) >= (characterCurrentY) ) &&
+			((musicBox2CurrentY <= characterCurrentY + CharacterHeight ))){
+		audioMaybe.play();
+		//audioDream.play();
+		musicBox2Active = false;	
 	}
 	
 	//Want player to always be on top (at the bottom of this list)
