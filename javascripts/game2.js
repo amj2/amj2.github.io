@@ -94,6 +94,7 @@ var characterSpeed = 1;
 var maxCharacterSpeed = 10;
 var minCharacterSpeed = 1;
 var distanceTraveled = 0;
+var score = 0;
 
 var deathclawSpriteX1 = 0;
 var deathclawSpriteY1 = 253;
@@ -403,8 +404,9 @@ function moveMusicBox(){
 }
 
 
-var musicBox1Active = true;
-var musicBox2Active = true;
+//1 = active, 2 = inactive, 3 = points given
+var musicBox1Active = 1;
+var musicBox2Active = 1;
 var deathclawActive = true;
 var playerAlive = true;
 var deathSound = true;
@@ -415,9 +417,14 @@ function update()
 	ctx.fillStyle = "black";
 	ctx.fillRect(0, 0, stage.width, stage.height);	
 		
-	ctx.fillRect(0,0,30,30);
+	ctx.fillRect(0,0,40,40);
 	ctx.fillStyle = "#FFFFFF";
-	ctx.fillText("Speed: " + characterSpeed, 15, 15);
+	ctx.fillText("Speed: " + characterSpeed + "     Score: " + score, 15, 15);
+	
+	//x,y,width,height
+	//ctx.fillRect(200,0,40,40);
+	//ctx.fillStyle = "#FFFFFF";
+	//ctx.fillText("Score: " + score, 15, 15);
 	
 	//Draw Image
 	//charImage = character
@@ -470,12 +477,12 @@ function update()
 		
 	}
 	
-	if(musicBox1Active == true){
+	if(musicBox1Active == 1){
 		ctx.drawImage(charImage, musicBoxSpriteX, musicBoxSpriteY, musicBoxWidth, musicBoxHeight, 
 				musicBox1CurrentX, musicBox1CurrentY, musicBoxWidth, musicBoxHeight);
 	}
 	
-	if(musicBox2Active == true){
+	if(musicBox2Active == 1){
 		ctx.drawImage(charImage, musicBoxSpriteX, musicBoxSpriteY, musicBoxWidth, musicBoxHeight, 
 				musicBox2CurrentX, musicBox2CurrentY, musicBoxWidth, musicBoxHeight);
 	}
@@ -487,19 +494,35 @@ function update()
 	if(((musicBox1CurrentX + musicBoxWidth) >= (characterCurrentX)) && 
 			((musicBox1CurrentX <= characterCurrentX + CharacterWidth)) &&
 			((musicBox1CurrentY + musicBoxHeight) >= (characterCurrentY) ) &&
-			((musicBox1CurrentY <= characterCurrentY + CharacterHeight ))){
+			((musicBox1CurrentY <= characterCurrentY + CharacterHeight )) &&
+			musicBox1Active == 1){
 		//audioMaybe.play();
 		audioDream.play();
-		musicBox1Active = false;	
+		musicBox1Active = 2;	
+		//score = score + 500;
+	}
+	
+	if(musicBox1Active == 2)
+	{
+		musicBox1Active = 3;
+		score = score + 500;
+		
 	}
 	
 	if(((musicBox2CurrentX + musicBoxWidth) >= (characterCurrentX)) && 
 			((musicBox2CurrentX <= characterCurrentX + CharacterWidth)) &&
 			((musicBox2CurrentY + musicBoxHeight) >= (characterCurrentY) ) &&
-			((musicBox2CurrentY <= characterCurrentY + CharacterHeight ))){
+			((musicBox2CurrentY <= characterCurrentY + CharacterHeight )) &&
+			musicBox2Active == 1){
 		audioMaybe.play();
 		//audioDream.play();
-		musicBox2Active = false;	
+		musicBox2Active = 2;	
+	}
+	
+	if(musicBox2Active == 2)
+	{
+		musicBox2Active = 3;
+		score = score + 500;	
 	}
 	
 	//Want player to always be on top (at the bottom of this list)
