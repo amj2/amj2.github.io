@@ -95,6 +95,7 @@ var maxCharacterSpeed = 10;
 var minCharacterSpeed = 1;
 var distanceTraveled = 0;
 var score = 0;
+var powerRodCount = 20;
 
 var deathclawSpriteX1 = 0;
 var deathclawSpriteY1 = 253;
@@ -121,6 +122,54 @@ var deadSpriteX = 0;
 var deadSpriteY = 382;//375;
 var deadHeight = 33;//32;
 var deadWidth = 72; //72;
+
+var powerRodSpriteX1 = 0;
+var powerRodSpriteY = 469;
+var powerRodSpriteX2 = 14;
+var powerRodSpriteX3 = 27;
+var powerRodSpriteX4 = 40;
+var powerRodSpriteX5 = 53;
+var powerRodSpriteX6 = 66;
+var powerRodSpriteX7 = 79;
+var powerRodSpriteX8 = 92;
+//var powerRodHitBoxX = 3;
+//var powerRodHitBoxY = 472;
+var powerRodHeight = 13;
+var powerRodWidth = 13;
+var powerRodHitboxHeight = 7;
+var powerRodHitboxWidth = 7;
+var powerRod1CurrentX = 0;
+var powerRod1CurrentY = 0;
+var powerRod1CurrentSpriteX = powerRodSpriteX1;
+var powerRod2CurrentX = 0;
+var powerRod2CurrentY = 0;
+var powerRod2CurrentSpriteX = powerRodSpriteX1;
+var powerRod3CurrentX = 0;
+var powerRod3CurrentY = 0;
+var powerRod3CurrentSpriteX = powerRodSpriteX1;
+var powerRod1Active = false;
+var powerRod2Active = false;
+var powerRod3Active = false;
+
+var cloudSpriteX1 = 0;
+var cloudSpriteY1 = 415;
+var cloudSpriteX2 = 75;
+var cloudSpriteY2 = 436;
+var cloudSpriteX3 = 120;
+var cloudSpriteY3 = 453;
+var cloudHeight1 = 54;
+var cloudWidth1 = 74;
+var cloudHeight2 = 33;
+var cloudWidth2 = 45;
+var cloudHeight3 = 16;
+var cloudWidth3 = 21;
+var cloud1CurrentX = 0;
+var cloud1CurrentY = 0;
+var cloud2CurrentX = 0;
+var cloud2CurrentY = 0;
+var cloud3CurrentX = 0;
+var cloud3CurrentY = 0;
+
 
 //Set sprites to look left and move
 function characterFacingLeft(){
@@ -291,6 +340,11 @@ function onKeyDown(evt)
 			characterSpeed = characterSpeed + 1;
 		}
 	}
+	//Spacebar pressed
+	if(evt.keyCode == 32){
+		throwPowerRod();
+		powerRodCount = powerRodCount -1;
+	}
 	/*
 	switch (evt.keyCode) 
 	{
@@ -348,7 +402,7 @@ function onKeyDown(evt)
 			
 } // end function
 
-function onKeyUp(evt){
+function onKeyUp(evt){	
 	if (evt.keyCode == 39) 		rightKeyDown = false;
   	if (evt.keyCode == 37) 		leftKeyDown = false;
 	if (evt.keyCode == 38) 		upKeyDown = false;
@@ -392,15 +446,34 @@ function deathByDeathclaw(){
 	}
 	//deathclawCurrentX = deathclawCurrentX-8;
 	//deathclawCurrentY = deathclawCurrentY+9;
-	
 }
-
 
 function moveMusicBox(){
 	musicBox1CurrentX = musicBox1CurrentX - characterSpeed;
 	musicBox1CurrentY = musicBox1CurrentY + characterSpeed;
 	musicBox2CurrentX = musicBox2CurrentX - characterSpeed;
 	musicBox2CurrentY = musicBox2CurrentY + characterSpeed;
+}
+
+function throwPowerRod(){
+	if(powerRod1Active == false){
+		powerRod1CurrentX = characterCurrentX-1;
+		powerRod1CurrentY = characterCurrentY-5;
+		powerRod1Active = true;
+	}
+	else if(powerRod2Active == false){
+		powerRod2CurrentX = characterCurrentX-1;
+		powerRod2CurrentY = characterCurrentY-5;
+		powerRod2Active = true;
+		
+	}
+	else if(powerRod3Active == false){
+		powerRod3CurrentX = characterCurrentX-1;
+		powerRod3CurrentY = characterCurrentY-5;
+		powerRod3Active = true;
+		
+	}
+	//can only throw 3 at a time
 }
 
 
@@ -419,7 +492,7 @@ function update()
 		
 	ctx.fillRect(0,0,40,40);
 	ctx.fillStyle = "#FFFFFF";
-	ctx.fillText("Speed: " + characterSpeed + "     Score: " + score, 15, 15);
+	ctx.fillText("Speed: " + characterSpeed + "     Score: " + score + "      Fusion Cores: " + powerRodCount, 15, 15);
 	
 	//x,y,width,height
 	//ctx.fillRect(200,0,40,40);
@@ -542,6 +615,7 @@ function update()
 	window.addEventListener('keydown',onKeyDown,true);
 	window.addEventListener('keyup',onKeyUp,true);
 
+	
 	//if no key pressed, move back to facing right.
 	if(playerAlive == true){
 		if(rightKeyDown == false && leftKeyDown == false &&
@@ -571,7 +645,119 @@ function update()
 			characterCurrentX = characterCurrentX - 5;
 		}
 	}
-	
+	if(playerAlive == true)
+	{
+		if(powerRod1Active == true){
+			ctx.drawImage(charImage, powerRod1CurrentSpriteX, powerRodSpriteY, powerRodWidth, powerRodHeight, 
+					powerRod1CurrentX, powerRod1CurrentY, powerRodWidth, powerRodHeight);
+			powerRod1CurrentX = powerRod1CurrentX - 5;
+			powerRod1CurrentY = powerRod1CurrentY; //- characterSpeed;
+			
+			//powerRod1CurrentSpriteX = 90;
+			if(powerRod1CurrentSpriteX == powerRodSpriteX1){
+				powerRod1CurrentSpriteX = powerRodSpriteX2;
+			}
+			
+			else if(powerRod1CurrentSpriteX == powerRodSpriteX2){
+				powerRod1CurrentSpriteX = powerRodSpriteX3;
+			}
+			else if(powerRod1CurrentSpriteX == powerRodSpriteX3){
+				powerRod1CurrentSpriteX = powerRodSpriteX4;
+			}
+			else if(powerRod1CurrentSpriteX == powerRodSpriteX4){
+				powerRod1CurrentSpriteX = powerRodSpriteX5;
+			}
+			else if(powerRod1CurrentSpriteX == powerRodSpriteX5){
+				powerRod1CurrentSpriteX = powerRodSpriteX6;
+			}
+			else if(powerRod1CurrentSpriteX == powerRodSpriteX6){
+				powerRod1CurrentSpriteX = powerRodSpriteX7;
+			}
+			else if(powerRod1CurrentSpriteX == powerRodSpriteX7){
+				powerRod1CurrentSpriteX = powerRodSpriteX8;
+			}
+			else{
+				powerRod1CurrentSpriteX = powerRodSpriteX1;
+			}
+			//Test for mushroom cloud
+			
+			if(powerRod1CurrentX == 35){
+				ctx.drawImage(charImage, cloudSpriteX3, cloudSpriteY3, cloudWidth3, cloudHeight3,
+						powerRod1CurrentX-(cloudWidth3/2), powerRod1CurrentY-cloudHeight3+30, cloudWidth3, cloudHeight3);
+			}
+			if(powerRod1CurrentX == 30){
+				ctx.drawImage(charImage, cloudSpriteX2, cloudSpriteY2, cloudWidth2, cloudHeight2,
+						powerRod1CurrentX-(cloudWidth2/2)+5, powerRod1CurrentY-cloudHeight2+30, cloudWidth2, cloudHeight2);
+			}
+			if(powerRod1CurrentX == 25){
+				ctx.drawImage(charImage, cloudSpriteX1, cloudSpriteY1, cloudWidth1, cloudHeight1,
+						powerRod1CurrentX-(cloudWidth1/2)+10, powerRod1CurrentY-cloudHeight1+30, cloudWidth1, cloudHeight1);
+			}
+			
+		}
+		if(powerRod2Active == true){
+			ctx.drawImage(charImage, powerRod2CurrentSpriteX, powerRodSpriteY, powerRodWidth, powerRodHeight, 
+					powerRod2CurrentX, powerRod2CurrentY, powerRodWidth, powerRodHeight);
+			powerRod2CurrentX = powerRod2CurrentX - 5;
+			powerRod2CurrentY = powerRod2CurrentY;// - characterSpeed;
+			
+			if(powerRod2CurrentSpriteX == powerRodSpriteX1){
+				powerRod2CurrentSpriteX = powerRodSpriteX2;
+			}
+			else if(powerRod2CurrentSpriteX == powerRodSpriteX2){
+				powerRod2CurrentSpriteX = powerRodSpriteX3;
+			}
+			else if(powerRod2CurrentSpriteX == powerRodSpriteX3){
+				powerRod2CurrentSpriteX = powerRodSpriteX4;
+			}
+			else if(powerRod2CurrentSpriteX == powerRodSpriteX4){
+				powerRod2CurrentSpriteX = powerRodSpriteX5;
+			}
+			else if(powerRod2CurrentSpriteX == powerRodSpriteX5){
+				powerRod2CurrentSpriteX = powerRodSpriteX6;
+			}
+			else if(powerRod2CurrentSpriteX == powerRodSpriteX6){
+				powerRod2CurrentSpriteX = powerRodSpriteX7;
+			}
+			else if(powerRod2CurrentSpriteX == powerRodSpriteX7){
+				powerRod2CurrentSpriteX = powerRodSpriteX8;
+			}
+			else{
+				powerRod2CurrentSpriteX = powerRodSpriteX1;
+			}    
+		}
+		if(powerRod3Active == true){
+			ctx.drawImage(charImage, powerRod3CurrentSpriteX, powerRodSpriteY, powerRodWidth, powerRodHeight, 
+					powerRod3CurrentX, powerRod3CurrentY, powerRodWidth, powerRodHeight);
+			powerRod3CurrentX = powerRod3CurrentX - 5;
+			powerRod3CurrentY = powerRod3CurrentY;// - characterSpeed;
+			
+			if(powerRod3CurrentSpriteX == powerRodSpriteX1){
+				powerRod3CurrentSpriteX = powerRodSpriteX2;
+			}
+			else if(powerRod3CurrentSpriteX == powerRodSpriteX2){
+				powerRod3CurrentSpriteX = powerRodSpriteX3;
+			}
+			else if(powerRod3CurrentSpriteX == powerRodSpriteX3){
+				powerRod3CurrentSpriteX = powerRodSpriteX4;
+			}
+			else if(powerRod3CurrentSpriteX == powerRodSpriteX4){
+				powerRod3CurrentSpriteX = powerRodSpriteX5;
+			}
+			else if(powerRod3CurrentSpriteX == powerRodSpriteX5){
+				powerRod3CurrentSpriteX = powerRodSpriteX6;
+			}
+			else if(powerRod3CurrentSpriteX == powerRodSpriteX6){
+				powerRod3CurrentSpriteX = powerRodSpriteX7;
+			}
+			else if(powerRod3CurrentSpriteX == powerRodSpriteX7){
+				powerRod3CurrentSpriteX = powerRodSpriteX8;
+			}
+			else{
+				powerRod3CurrentSpriteX = powerRodSpriteX1;
+			}    
+		}
+	}
 	
 	
 	//if(upKeyDown == true){
