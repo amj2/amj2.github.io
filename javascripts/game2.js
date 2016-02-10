@@ -164,7 +164,7 @@ var maxCharacterSpeed = 10;
 var minCharacterSpeed = 1;
 var distanceTraveled = 0;
 var score = 0;
-var powerRodCount = 20;
+var powerRodCount = 10;
 
 var deathclawSpriteX1 = 0;
 var deathclawSpriteY1 = 253;
@@ -184,8 +184,8 @@ var musicBoxWidth = 39;
 var musicBox1CurrentX = 400;
 var musicBox1CurrentY = 300;
 
-var musicBox2CurrentX = 200;
-var musicBox2CurrentY = 200;
+var musicBox2CurrentX = 250+1500;
+var musicBox2CurrentY = 200-1500;
 
 var deadSpriteX = 0;
 var deadSpriteY = 382;//375;
@@ -239,6 +239,33 @@ var cloud2CurrentY = 0;
 var cloud3CurrentX = 0;
 var cloud3CurrentY = 0;
 
+var powerPlantSpriteX = 272;
+var powerPlantSpriteY1 = 0;
+var powerPlantSpriteY2 = 228;
+var powerPlantSpriteY3 = 456;
+var powerPlantSpriteY4 = 686;
+var powerPlantSpriteY5 = 931;
+var powerPlantSpriteY6 = 1195;
+var powerPlantSpriteWidth = 245;
+var powerPlantSpriteHeight1 = 228;
+var powerPlantSpriteHeight2 = 228;
+var powerPlantSpriteHeight3 = 230;
+var powerPlantSpriteHeight4 = 245;
+var powerPlantSpriteHeight5 = 263;
+var powerPlantSpriteHeight6 = 286;
+
+//take currentX + 196
+//take currentY + 135;
+var powerPlantHitBoxWidth = 21;
+var powerPlantHitBoxHeight = 47;
+var yoffset = 140;
+
+var powerPlant1CurrentX = -60 + yoffset; //+ powerPlantSpriteWidth;
+var powerPlant1CurrentY = GameHeight - powerPlantSpriteHeight1 - yoffset;
+var powerPlant1CurrentSpriteY = powerPlantSpriteY1;
+var powerPlant1CurrentSpriteHeight = powerPlantSpriteHeight1;
+
+var frameCounter = 0;
 
 //Set sprites to look left and move
 function characterFacingLeft(){
@@ -419,7 +446,7 @@ function onKeyDown(evt)
 	if(evt.keyCode == 32){
 		//menuScreen = false;
 		throwPowerRod();
-		powerRodCount = powerRodCount -1;
+		//powerRodCount = powerRodCount -1;
 	}
 	/*
 	switch (evt.keyCode) 
@@ -531,22 +558,37 @@ function moveMusicBox(){
 	musicBox2CurrentY = musicBox2CurrentY + characterSpeed;
 }
 
+function movePowerPlant(){
+	powerPlant1CurrentX = powerPlant1CurrentX - characterSpeed;
+	powerPlant1CurrentY = powerPlant1CurrentY + characterSpeed;
+}
+
+var powerRod1Velocity = 0;
+var powerRod2Velocity = 0;
+var powerRod3Velocity = 0;
+
 function throwPowerRod(){
-	if(powerRod1Active == false){
+	if(powerRod1Active == false && powerRodCount > 0){
+		powerRod1Velocity = characterSpeed;
 		powerRod1CurrentX = characterCurrentX-1;
 		powerRod1CurrentY = characterCurrentY-5;
 		powerRod1Active = true;
+		powerRodCount--;
 	}
-	else if(powerRod2Active == false){
+	else if(powerRod2Active == false && powerRodCount > 0){
+		powerRod2Velocity = characterSpeed;
 		powerRod2CurrentX = characterCurrentX-1;
 		powerRod2CurrentY = characterCurrentY-5;
 		powerRod2Active = true;
+		powerRodCount--;
 		
 	}
-	else if(powerRod3Active == false){
+	else if(powerRod3Active == false && powerRodCount > 0){
+		powerRod3Velocity = characterSpeed;
 		powerRod3CurrentX = characterCurrentX-1;
 		powerRod3CurrentY = characterCurrentY-5;
 		powerRod3Active = true;
+		powerRodCount--;
 		
 	}
 	//can only throw 3 at a time
@@ -559,11 +601,23 @@ var musicBox2Active = 1;
 var deathclawActive = true;
 var playerAlive = true;
 var deathSound = true;
-
-
+var powerPlant1Active = false;
+var powerDelayTimer = 0;
+var powerRod1Mushroom = false;
+var powerRod1MushroomCounter = 1;
+var powerRod2Mushroom = false;
+var powerRod2MushroomCounter = 1;
+var powerRod3Mushroom = false;
+var powerRod3MushroomCounter = 1;
+var crashMushroom = false;
+var crashMushroomCounter = 1;
+var powerPlantCounter = 1;
+var endGame = false;
 
 function update()
-{		
+{	
+	if(false){}
+	
 	if(menuScreen == true){
 		//Clear Canvas
 		ctx.fillStyle = "black";
@@ -686,7 +740,7 @@ function update()
 		//	logoCounter++;
 		//}
 		
-		if(logoCounter == 11 || logoCounter == 12){
+		if(logoCounter == 11 || logoCounter == 12 || logoCounter == 13){
 			window.addEventListener('keydown',menuStart,true);
 			ctx.fillStyle = "#FFFFFF";
 			ctx.fillText("Press SpaceBar To Play", 140 , stage.height / 1.5);
@@ -697,6 +751,15 @@ function update()
 		//	menuScreen = false;
 		//}
 	}
+	else if(endGame == true){
+		//Clear Canvas
+		ctx.fillStyle = "black";
+		ctx.fillRect(0, 0, stage.width, stage.height);	
+		
+		ctx.fillRect(0,0,40,40);
+		ctx.fillStyle = "#FFFFFF";
+		ctx.fillText("Final Score: " + score + "      Frames: " + frameCounter, 15, 15);
+	}
 	else{
 		
 		
@@ -706,6 +769,7 @@ function update()
 			
 		ctx.fillRect(0,0,40,40);
 		ctx.fillStyle = "#FFFFFF";
+		//ctx.fillText("Speed: " + characterSpeed + "     Score: " + score + "      Fusion Cores: " + powerRodCount, 15, 15);
 		ctx.fillText("Speed: " + characterSpeed + "     Score: " + score + "      Fusion Cores: " + powerRodCount, 15, 15);
 		
 		//x,y,width,height
@@ -739,6 +803,197 @@ function update()
 		ctx.strokeStyle="green"
 		ctx.stroke();
 		
+		ctx.moveTo(280, 384);
+		ctx.lineTo(512, 96);
+		ctx.strokeStyle="green"
+		ctx.stroke();
+		
+		ctx.moveTo(210, 384);
+		ctx.lineTo(512, 0);
+		ctx.strokeStyle="green"
+		ctx.stroke();
+		
+		
+		/*
+		var powerPlantSpriteX = 272;
+		var powerPlantSpriteY1 = 0;
+		var powerPlantSpriteY2 = 229;
+		var powerPlantSpriteY3 = 458;
+		var powerPlantSpriteY4 = 690;
+		var powerPlantSpriteY5 = 935;
+		var powerPlantSpriteY6 = 1199;
+		var powerPlantSpriteWidth = 245;
+		var powerPlantSpriteHeight1 = 228;
+		var powerPlantSpriteHeight2 = 228;
+		var powerPlantSpriteHeight3 = 231;
+		var powerPlantSpriteHeight4 = 244;
+		var powerPlantSpriteHeight5 = 263;
+		var powerPlantSpriteHeight6 = 287;
+
+		//take currentX + 196
+		//take currentY + 135;
+		var powerPlantHitBoxWidth = 21;
+		var powerPlantHitBoxHeight = 47;
+
+		var powerPlant1CurrentX = 0 + powerPlantSpriteHeight1;
+		var powerPlant1CurrentY = 0 + powerPlantSpriteWidth;
+		*/
+		
+		
+		//PowerPlant1
+		ctx.drawImage(charImage, powerPlantSpriteX, powerPlant1CurrentSpriteY, powerPlantSpriteWidth, 
+				powerPlant1CurrentSpriteHeight, powerPlant1CurrentX, powerPlant1CurrentY, powerPlantSpriteWidth,
+				powerPlant1CurrentSpriteHeight);
+
+		if(playerAlive == true)
+			movePowerPlant();
+		
+		//hitbox for power socket		
+		if(((powerPlant1CurrentX + 196 + powerPlantHitBoxWidth) >= (powerRod1CurrentX)) &&
+				((powerPlant1CurrentX + 196 <= powerRod1CurrentX + powerRodWidth)) &&
+				((powerPlant1CurrentY + 135 + powerPlantHitBoxHeight) >= (powerRod1CurrentY) ) &&
+				((powerPlant1CurrentY + 135 <= powerRod1CurrentY + powerRodHeight)) &&
+				powerPlant1CurrentSpriteY == powerPlantSpriteY1 &&
+				powerRod1Active && powerPlant1Active == false){
+			powerRod1Active = false;
+			powerPlant1CurrentSpriteY = powerPlantSpriteY2;
+			powerPlant1CurrentSpriteHeight = powerPlantSpriteHeight2;
+			powerPlant1CurrentY = powerPlant1CurrentY - (powerPlantSpriteHeight2 - powerPlantSpriteHeight1);
+			powerPlant1Active = true;
+			score = score + 1000;
+		}
+		else if(((powerPlant1CurrentX + 196 + powerPlantHitBoxWidth) >= (powerRod2CurrentX)) &&
+				((powerPlant1CurrentX + 196 <= powerRod2CurrentX + powerRodWidth)) &&
+				((powerPlant1CurrentY + 135 + powerPlantHitBoxHeight) >= (powerRod2CurrentY) ) &&
+				((powerPlant1CurrentY + 135 <= powerRod2CurrentY + powerRodHeight)) &&
+				powerPlant1CurrentSpriteY == powerPlantSpriteY1 &&
+				powerRod2Active && powerPlant1Active == false){
+			powerRod2Active = false;
+			powerPlant1CurrentSpriteY = powerPlantSpriteY2;
+			powerPlant1CurrentSpriteHeight = powerPlantSpriteHeight2;
+			powerPlant1CurrentY = powerPlant1CurrentY - (powerPlantSpriteHeight2 - powerPlantSpriteHeight1);
+			powerPlant1Active = true;
+			score = score + 1000;
+		}
+		if(((powerPlant1CurrentX + 196 + powerPlantHitBoxWidth) >= (powerRod3CurrentX)) &&
+				((powerPlant1CurrentX + 196 <= powerRod3CurrentX + powerRodWidth)) &&
+				((powerPlant1CurrentY + 135 + powerPlantHitBoxHeight) >= (powerRod3CurrentY) ) &&
+				((powerPlant1CurrentY + 135 <= powerRod3CurrentY + powerRodHeight)) &&
+				powerPlant1CurrentSpriteY == powerPlantSpriteY1 &&
+				powerRod3Active && powerPlant1Active == false){
+			powerRod3Active = false;
+			powerPlant1CurrentSpriteY = powerPlantSpriteY2;
+			powerPlant1CurrentSpriteHeight = powerPlantSpriteHeight2;
+			powerPlant1CurrentY = powerPlant1CurrentY - (powerPlantSpriteHeight2 - powerPlantSpriteHeight1);
+			powerPlant1Active = true;
+			score = score + 1000;
+		}
+		
+		
+		if(powerPlant1CurrentSpriteY == powerPlantSpriteY2 && powerPlant1Active && powerDelayTimer == 3){
+			powerPlant1CurrentSpriteY = powerPlantSpriteY3;
+			powerPlant1CurrentSpriteHeight = powerPlantSpriteHeight3;
+			powerPlant1CurrentY = powerPlant1CurrentY - (powerPlantSpriteHeight3 - powerPlantSpriteHeight2);
+			powerDelayTimer = 0;
+		}
+		else if(powerPlant1CurrentSpriteY == powerPlantSpriteY3 && powerPlant1Active && powerDelayTimer == 3){
+			powerPlant1CurrentSpriteY = powerPlantSpriteY4;
+			powerPlant1CurrentSpriteHeight = powerPlantSpriteHeight4;
+			powerPlant1CurrentY = powerPlant1CurrentY - (powerPlantSpriteHeight4 - powerPlantSpriteHeight3);
+			powerDelayTimer = 0;
+		}
+		else if(powerPlant1CurrentSpriteY == powerPlantSpriteY4 && powerPlant1Active && powerDelayTimer == 3){
+			powerPlant1CurrentSpriteY = powerPlantSpriteY5;
+			powerPlant1CurrentSpriteHeight = powerPlantSpriteHeight5;
+			powerPlant1CurrentY = powerPlant1CurrentY - (powerPlantSpriteHeight5 - powerPlantSpriteHeight4);
+			powerDelayTimer = 0;
+		}
+		else if(powerPlant1CurrentSpriteY == powerPlantSpriteY5 && powerPlant1Active && powerDelayTimer == 3){
+			powerPlant1CurrentSpriteY = powerPlantSpriteY6;
+			powerPlant1CurrentSpriteHeight = powerPlantSpriteHeight6;
+			powerPlant1CurrentY = powerPlant1CurrentY - (powerPlantSpriteHeight6 - powerPlantSpriteHeight5);
+			powerDelayTimer = 0;
+		}
+		else if(powerPlant1CurrentSpriteY == powerPlantSpriteY6 && powerPlant1Active && powerDelayTimer == 3 ){
+			powerPlant1CurrentSpriteY = powerPlantSpriteY2;
+			powerPlant1CurrentSpriteHeight = powerPlantSpriteHeight2;
+			powerPlant1CurrentY = powerPlant1CurrentY + (powerPlantSpriteHeight6 - powerPlantSpriteHeight2);
+			powerDelayTimer = 0;
+		}
+		else if(powerPlant1Active){
+			powerDelayTimer++;
+		}
+		// end of PowerPlant Hitbox
+		
+		//PowerPlant ExplosionHit
+		//Step 1, see if powerplant Y lines up with powerRod
+		if(((powerPlant1CurrentX + 171) >= (powerRod1CurrentX)) &&
+				((powerPlant1CurrentX + 150) <= (powerRod1CurrentX + powerRodWidth)) &&
+				((powerPlant1CurrentY +(powerPlant1CurrentSpriteHeight - powerPlantSpriteHeight1)+ 203) >= powerRod1CurrentY) &&
+				((powerPlant1CurrentY +(powerPlant1CurrentSpriteHeight - powerPlantSpriteHeight1)+ 136) <= (powerRod1CurrentY + powerRodHeight)) &&
+				powerRod1Active){
+					powerRod1Active = false;
+					powerRod1Mushroom = true;
+				}
+		if(((powerPlant1CurrentX + 171) >= (powerRod2CurrentX)) &&
+				((powerPlant1CurrentX + 150) <= (powerRod2CurrentX + powerRodWidth)) &&
+				((powerPlant1CurrentY +(powerPlant1CurrentSpriteHeight - powerPlantSpriteHeight1)+ 203) >= powerRod2CurrentY) &&
+				((powerPlant1CurrentY +(powerPlant1CurrentSpriteHeight - powerPlantSpriteHeight1)+ 136) <= (powerRod2CurrentY + powerRodHeight)) &&
+				powerRod2Active){
+					powerRod2Active = false;
+					powerRod2Mushroom = true;
+				}
+		if(((powerPlant1CurrentX + 171) >= (powerRod3CurrentX)) &&
+				((powerPlant1CurrentX + 150) <= (powerRod3CurrentX + powerRodWidth)) &&
+				((powerPlant1CurrentY +(powerPlant1CurrentSpriteHeight - powerPlantSpriteHeight1)+ 203) >= powerRod3CurrentY) &&
+				((powerPlant1CurrentY +(powerPlant1CurrentSpriteHeight - powerPlantSpriteHeight1)+ 136) <= (powerRod3CurrentY + powerRodHeight)) &&
+				powerRod3Active){
+					powerRod1Active = false;
+					powerRod1Mushroom = true;
+				}
+
+		if(((powerPlant1CurrentX + 243) >= (powerRod1CurrentX)) &&
+				((powerPlant1CurrentX + 175) <= (powerRod1CurrentX + powerRodWidth)) &&
+				((powerPlant1CurrentY + (powerPlant1CurrentSpriteHeight - powerPlantSpriteHeight1) + 134) >= (powerRod1CurrentY))  &&
+				((powerPlant1CurrentY + (powerPlant1CurrentSpriteHeight - powerPlantSpriteHeight1)) <= (powerRod1CurrentY + powerRodHeight)) &&
+				powerRod1Active){
+					powerRod1Active = false;
+					powerRod1Mushroom = true;
+				}
+				
+			
+		
+		/*if(((powerPlant1CurrentX +  + powerPlantHitBoxWidth) >= (powerRod3CurrentX)) &&
+				((powerPlant1CurrentX + 196 <= powerRod3CurrentX + powerRodWidth)) &&
+				((powerPlant1CurrentY + 135 + powerPlantHitBoxHeight) >= (powerRod3CurrentY) ) &&
+				((powerPlant1CurrentY + 135 <= powerRod3CurrentY + powerRodHeight)) &&
+				powerPlant1CurrentSpriteY == powerPlantSpriteY1 &&
+				powerRod3Active && powerPlant1Active == false){*/
+		
+		//reset powerplant
+		if(((powerPlant1CurrentX + powerPlantSpriteWidth) < 0) && ((powerPlant1CurrentY + powerPlant1CurrentSpriteHeight) > GameHeight)){
+			powerPlant1CurrentX = 300;
+			powerPlant1CurrentY = -300;
+			if(powerPlantCounter < 10){
+				powerPlantCounter++;
+			}
+			else{
+				endGame = true;
+			}
+			powerPlant1Active = false;
+			powerPlant1CurrentSpriteY = powerPlantSpriteY1;
+			powerPlant1CurrentSpriteHeight = powerPlantSpriteHeight1;
+		}
+		
+		//reset deathclaw
+		if(((deathclawCurrentX + deathclawWidth) < 0) && ((deathclawCurrentY + deathclawHeight) > GameHeight)){
+			deathclawCurrentX = (Math.floor((Math.random())*400) + 400);
+			deathclawCurrentY = -200;
+		}
+	
+		
+		
+		//Deathclaw
 		ctx.drawImage(charImage,deathclawSpriteX, deathclawSpriteY, deathclawWidth, deathclawHeight, 
 				deathclawCurrentX, deathclawCurrentY, deathclawWidth, deathclawHeight);
 		
@@ -764,6 +1019,58 @@ function update()
 			
 		}
 		
+		
+		//For power plant deaths
+		//Use 3 squares
+			//Square 1
+			
+		if(((powerPlant1CurrentX + 174) >= (characterCurrentX)) &&
+				((powerPlant1CurrentX <= characterCurrentX + CharacterWidth)) &&
+				((powerPlant1CurrentY + (powerPlant1CurrentSpriteHeight - powerPlantSpriteHeight1) + 202) >= (characterCurrentY) ) &&
+				((powerPlant1CurrentY + (powerPlant1CurrentSpriteHeight - powerPlantSpriteHeight1) <= characterCurrentY + CharacterHeight))){
+			//if(characterCurrentX == 100){
+				//audioMaybe.stop();
+				if(deathSound == true){
+					audioWilhelm.play();
+					deathSound = false;
+				}
+				//deathclawActive = false;
+				crashMushroom = true;
+				playerAlive = false;
+				
+		}
+		
+		if(((powerPlant1CurrentX + 212) >= (characterCurrentX)) &&
+				((powerPlant1CurrentX + 175 <= characterCurrentX + CharacterWidth)) &&
+				((powerPlant1CurrentY + (powerPlant1CurrentSpriteHeight - powerPlantSpriteHeight1) + 164) >= (characterCurrentY) ) &&
+				((powerPlant1CurrentY + (powerPlant1CurrentSpriteHeight - powerPlantSpriteHeight1) <= characterCurrentY + CharacterHeight))){
+			//if(characterCurrentX == 100){
+				//audioMaybe.stop();
+				if(deathSound == true){
+					audioWilhelm.play();
+					deathSound = false;
+				}
+				//deathclawActive = false;
+				crashMushroom = true;
+				playerAlive = false;
+				
+		}
+		if(((powerPlant1CurrentX + 243) >= (characterCurrentX)) &&
+				((powerPlant1CurrentX + 175 <= characterCurrentX + CharacterWidth)) &&
+				((powerPlant1CurrentY + (powerPlant1CurrentSpriteHeight - powerPlantSpriteHeight1) + 134) >= (characterCurrentY) ) &&
+				((powerPlant1CurrentY + (powerPlant1CurrentSpriteHeight - powerPlantSpriteHeight1) <= characterCurrentY + CharacterHeight))){
+			//if(characterCurrentX == 100){
+				//audioMaybe.stop();
+				if(deathSound == true){
+					audioWilhelm.play();
+					deathSound = false;
+				}
+				//deathclawActive = false;
+				crashMushroom = true;
+				playerAlive = false;
+				
+			}
+		
 		if(musicBox1Active == 1){
 			ctx.drawImage(charImage, musicBoxSpriteX, musicBoxSpriteY, musicBoxWidth, musicBoxHeight, 
 					musicBox1CurrentX, musicBox1CurrentY, musicBoxWidth, musicBoxHeight);
@@ -783,7 +1090,7 @@ function update()
 				((musicBox1CurrentY + musicBoxHeight) >= (characterCurrentY) ) &&
 				((musicBox1CurrentY <= characterCurrentY + CharacterHeight )) &&
 				musicBox1Active == 1){
-			//audioMaybe.play();
+			audioMaybe.pause();
 			audioDream.play();
 			musicBox1Active = 2;	
 			//score = score + 500;
@@ -801,8 +1108,8 @@ function update()
 				((musicBox2CurrentY + musicBoxHeight) >= (characterCurrentY) ) &&
 				((musicBox2CurrentY <= characterCurrentY + CharacterHeight )) &&
 				musicBox2Active == 1){
+			audioDream.pause();
 			audioMaybe.play();
-			//audioDream.play();
 			musicBox2Active = 2;	
 		}
 		
@@ -817,6 +1124,10 @@ function update()
 			ctx.drawImage(charImage,characterSpriteX,characterSpriteY,CharacterWidth,CharacterHeight,
 						characterCurrentX,characterCurrentY,
 						CharacterWidth,CharacterHeight);
+		}
+		else if(crashed = true){
+			ctx.drawImage(charImage, deadSpriteX, deadSpriteY, deadWidth, deadHeight, 
+					characterCurrentX, characterCurrentY, deadWidth, deadHeight);
 		}
 		else{
 			ctx.drawImage(charImage, deadSpriteX, deadSpriteY, deadWidth, deadHeight, 
@@ -853,10 +1164,10 @@ function update()
 			}
 		
 			if(rightKeyDown == true){
-				characterCurrentX = characterCurrentX + 5;
+				characterCurrentX = characterCurrentX + 9;
 			}
 			if(leftKeyDown == true){
-				characterCurrentX = characterCurrentX - 5;
+				characterCurrentX = characterCurrentX - 9;
 			}
 		}
 		if(playerAlive == true)
@@ -864,8 +1175,8 @@ function update()
 			if(powerRod1Active == true){
 				ctx.drawImage(charImage, powerRod1CurrentSpriteX, powerRodSpriteY, powerRodWidth, powerRodHeight, 
 						powerRod1CurrentX, powerRod1CurrentY, powerRodWidth, powerRodHeight);
-				powerRod1CurrentX = powerRod1CurrentX - 5;
-				powerRod1CurrentY = powerRod1CurrentY; //- characterSpeed;
+				powerRod1CurrentX = powerRod1CurrentX - 2*powerRod1Velocity;
+				powerRod1CurrentY = powerRod1CurrentY - 2*powerRod1Velocity + characterSpeed;
 				
 				//powerRod1CurrentSpriteX = 90;
 				if(powerRod1CurrentSpriteX == powerRodSpriteX1){
@@ -894,7 +1205,7 @@ function update()
 					powerRod1CurrentSpriteX = powerRodSpriteX1;
 				}
 				//Test for mushroom cloud
-				
+				/*
 				if(powerRod1CurrentX == 35){
 					ctx.drawImage(charImage, cloudSpriteX3, cloudSpriteY3, cloudWidth3, cloudHeight3,
 							powerRod1CurrentX-(cloudWidth3/2), powerRod1CurrentY-cloudHeight3+30, cloudWidth3, cloudHeight3);
@@ -907,13 +1218,14 @@ function update()
 					ctx.drawImage(charImage, cloudSpriteX1, cloudSpriteY1, cloudWidth1, cloudHeight1,
 							powerRod1CurrentX-(cloudWidth1/2)+10, powerRod1CurrentY-cloudHeight1+30, cloudWidth1, cloudHeight1);
 				}
+				*/
 				
 			}
 			if(powerRod2Active == true){
 				ctx.drawImage(charImage, powerRod2CurrentSpriteX, powerRodSpriteY, powerRodWidth, powerRodHeight, 
 						powerRod2CurrentX, powerRod2CurrentY, powerRodWidth, powerRodHeight);
-				powerRod2CurrentX = powerRod2CurrentX - 5;
-				powerRod2CurrentY = powerRod2CurrentY;// - characterSpeed;
+				powerRod2CurrentX = powerRod2CurrentX - 2*powerRod2Velocity;
+				powerRod2CurrentY = powerRod2CurrentY - 2*powerRod2Velocity + characterSpeed;
 				
 				if(powerRod2CurrentSpriteX == powerRodSpriteX1){
 					powerRod2CurrentSpriteX = powerRodSpriteX2;
@@ -943,8 +1255,8 @@ function update()
 			if(powerRod3Active == true){
 				ctx.drawImage(charImage, powerRod3CurrentSpriteX, powerRodSpriteY, powerRodWidth, powerRodHeight, 
 						powerRod3CurrentX, powerRod3CurrentY, powerRodWidth, powerRodHeight);
-				powerRod3CurrentX = powerRod3CurrentX - 5;
-				powerRod3CurrentY = powerRod3CurrentY;// - characterSpeed;
+				powerRod3CurrentX = powerRod3CurrentX - 2*powerRod3Velocity;
+				powerRod3CurrentY = powerRod3CurrentY - 2*powerRod3Velocity + characterSpeed;
 				
 				if(powerRod3CurrentSpriteX == powerRodSpriteX1){
 					powerRod3CurrentSpriteX = powerRodSpriteX2;
@@ -973,6 +1285,90 @@ function update()
 			}
 		}
 		
+		if(powerRod1Mushroom == true){
+			if(powerRod1MushroomCounter == 1){
+				ctx.drawImage(charImage,cloudSpriteX3, cloudSpriteY3, cloudWidth3, cloudHeight3,
+						powerRod1CurrentX-(cloudWidth3/2), powerRod1CurrentY-cloudHeight3+30, cloudWidth3, cloudHeight3);
+				powerRod1MushroomCounter++;
+			}
+			else if(powerRod1MushroomCounter == 2){
+				ctx.drawImage(charImage, cloudSpriteX2, cloudSpriteY2, cloudWidth2, cloudHeight2,
+						powerRod1CurrentX-(cloudWidth2/2), powerRod1CurrentY-cloudHeight2+30, cloudWidth2, cloudHeight2);
+				powerRod1MushroomCounter++;
+			}
+			else if(powerRod1MushroomCounter == 3){
+				ctx.drawImage(charImage, cloudSpriteX1, cloudSpriteY1, cloudWidth1, cloudHeight1,
+						powerRod1CurrentX-(cloudWidth1/2), powerRod1CurrentY-cloudHeight1+30, cloudWidth1, cloudHeight1);
+				powerRod1Mushroom = false;
+				powerRod1MushroomCounter = 1;
+			}
+		}
+		
+		if(powerRod2Mushroom == true){
+			if(powerRod2MushroomCounter == 1){
+				ctx.drawImage(charImage,cloudSpriteX3, cloudSpriteY3, cloudWidth3, cloudHeight3,
+						powerRod2CurrentX-(cloudWidth3/2), powerRod2CurrentY-cloudHeight3+30, cloudWidth3, cloudHeight3);
+				powerRod2MushroomCounter++;
+			}
+			else if(powerRod2MushroomCounter == 2){
+				ctx.drawImage(charImage, cloudSpriteX2, cloudSpriteY2, cloudWidth2, cloudHeight2,
+						powerRod2CurrentX-(cloudWidth2/2), powerRod2CurrentY-cloudHeight2+30, cloudWidth2, cloudHeight2);
+				powerRod2MushroomCounter++;
+			}
+			else if(powerRod1MushroomCounter == 3){
+				ctx.drawImage(charImage, cloudSpriteX1, cloudSpriteY1, cloudWidth1, cloudHeight1,
+						powerRod2CurrentX-(cloudWidth1/2), powerRod2CurrentY-cloudHeight1+30, cloudWidth1, cloudHeight1);
+				powerRod2Mushroom = false;
+				powerRod2MushroomCounter = 1;
+			}
+		}
+		if(powerRod3Mushroom == true){
+			if(powerRod3MushroomCounter == 1){
+				ctx.drawImage(charImage,cloudSpriteX3, cloudSpriteY3, cloudWidth3, cloudHeight3,
+						powerRod3CurrentX-(cloudWidth3/2), powerRod3CurrentY-cloudHeight3+30, cloudWidth3, cloudHeight3);
+				powerRod3MushroomCounter++;
+			}
+			else if(powerRod3MushroomCounter == 2){
+				ctx.drawImage(charImage, cloudSpriteX2, cloudSpriteY2, cloudWidth2, cloudHeight2,
+						powerRod3CurrentX-(cloudWidth2/2), powerRod3CurrentY-cloudHeight2+30, cloudWidth2, cloudHeight2);
+				powerRod3MushroomCounter++;
+			}
+			else if(powerRod3MushroomCounter == 3){
+				ctx.drawImage(charImage, cloudSpriteX1, cloudSpriteY1, cloudWidth1, cloudHeight1,
+						powerRod3CurrentX-(cloudWidth1/2), powerRod3CurrentY-cloudHeight1+30, cloudWidth1, cloudHeight1);
+				powerRod3Mushroom = false;
+				powerRod3MushroomCounter = 1;
+			}
+		}
+		if(crashMushroom == true){
+			if(crashMushroomCounter == 1){
+				ctx.drawImage(charImage,cloudSpriteX3, cloudSpriteY3, cloudWidth3, cloudHeight3,
+						characterCurrentX-(cloudWidth3/2), characterCurrentY-cloudHeight3+30, cloudWidth3, cloudHeight3);
+				crashMushroomCounter++;
+			}
+			else if(crashMushroomCounter == 2){
+				ctx.drawImage(charImage, cloudSpriteX2, cloudSpriteY2, cloudWidth2, cloudHeight2,
+						characterCurrentX-(cloudWidth2/2), characterCurrentY-cloudHeight2+30, cloudWidth2, cloudHeight2);
+				crashMushroomCounter++;
+			}
+			else if(crashMushroomCounter == 3){
+				ctx.drawImage(charImage, cloudSpriteX1, cloudSpriteY1, cloudWidth1, cloudHeight1,
+						characterCurrentX-(cloudWidth1/2), characterCurrentY-cloudHeight1+30, cloudWidth1, cloudHeight1);
+				//powerRod1Mushroom = false;
+				crashMushroomCounter = 1;
+			}
+		}
+		
+		//reset thrown rods
+		if(powerRod1Active == true && ((powerRod1CurrentX+powerRodWidth) < 0)){
+			powerRod1Active = false;
+		}
+		if(powerRod2Active == true && ((powerRod2CurrentX+powerRodWidth) < 0)){
+			powerRod2Active = false;
+		}if(powerRod3Active == true && ((powerRod3CurrentX+powerRodWidth) < 0)){
+			powerRod3Active = false;
+		}
+		
 		
 		//if(upKeyDown == true){
 		//	characterCurrentY = characterCurrentY - 4;
@@ -980,6 +1376,7 @@ function update()
 		//if(downKeyDown == true){
 		//	characterCurrentY = characterCurrentY + 4;
 		//}
+		frameCounter++;
 	}
 		
 }
