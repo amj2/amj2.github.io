@@ -1,9 +1,9 @@
 //49 x 66  with borders
 
-//var GameWidth = 512;
-//var GameHeight = 384;
-var GameWidth = 1024;
-var GameHeight = 768;
+var GameWidth = 512;
+var GameHeight = 384;
+//var GameWidth = 1024;
+//var GameHeight = 768;
 
 
 //var TimePerFrame = 75; //33fps
