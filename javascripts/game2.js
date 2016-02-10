@@ -1,3 +1,5 @@
+var menuScreen = true;
+
 //------------
 //System Vars
 //------------
@@ -22,10 +24,22 @@ charImage.ready = false;
 charImage.onload = setAssetReady;
 charImage.src = PathToCharacter;  // source image location set in constants.js
 
+//For Intro
+var logoImage = new Image();
+logoImage.ready = false;
+logoImage.onload = setAssetReady;
+logoImage.src = PathToLogo;  // source image location set in constants.js
+
+
 //var audio = new Audio();
 var audioWilhelm = new Audio('audio/Wilhelm.mp3');
 var audioMaybe = new Audio('audio/TheInkSpots-Maybe.mp3');
 var audioDream = new Audio('audio/LouisArmstrong-AKissToBuildADreamOn.mp3');
+
+//Audio for Intro
+var audioPowerSwitch = new Audio('audio/PowerboySwitchMain.mp3');
+var audioGun = new Audio('audio/gun.mp3');
+
 //audio.ready = false;
 //audio.onload = setAssetReady;
 //audio.src = 'audio/Wilhelm.mp3';
@@ -46,7 +60,7 @@ var gameloop;
 
 function preloading()
 {	
-	if (charImage.ready)// && audio.ready)
+	if (charImage.ready && logoImage.ready)// && audio.ready)
 	{
 		clearInterval(preloader);		
 		gameloop = setInterval(update, TimePerFrame);	
@@ -64,6 +78,61 @@ function preloading()
 //Character is 46w x 63h
 //Variables for character location
   //Start character in bottom right corner
+
+//VARIABLE FOR INTRO
+var logoX = 0;
+var logoY1 = 1;
+var logoY2 = 70;
+var logoY3 = 139;
+var logoY4 = 208;
+var logoY5 = 277;
+var logoY6 = 346;
+var logoY7 = 415;
+var logoY8 = 484;
+var logoY9 = 553;
+var logoY10 = 622;
+var logoY11 = 691;
+var logoY12 = 760;
+var logoY13 = 829;
+var logoY14 = 898;
+var logoY15 = 967;
+var logo1_15Height = 69;
+var logo1_15Width = 241;
+
+var logoY16 = 1036;
+var logo16Height = 70;
+var logo16Width = 270;
+
+var logoY17 = 1106;
+var logo17Height = 83;
+var logo17Width = 278;
+
+var logoY18 = 1189;
+var logo18Height = 110;
+var logo18Width = 279;
+
+var logoY19 = 1299;
+var logo19Height = 121;
+var logo19Width = 243;
+
+var logoY20 = 1420;
+var logo20Height = 120;
+var logo20Width = 234;
+
+var currentLogoX = logoX;
+var currentLogoY = logoY1;
+var currentLogoHeight = logo1_15Height;
+var currentLogoWidth = logo1_15Width;
+
+//var logoCounter = -12;
+
+var logoCounter = -15;
+var secondCounter = -15;
+
+var switchPlay = false;
+
+
+//VARIABLE FOR GAME
 var characterCurrentX = GameWidth - 140 - CharacterWidth;
 var characterCurrentY = GameHeight - 40 - CharacterHeight;
 
@@ -272,6 +341,12 @@ function upKeyDown()
 }
 */
 
+function menuStart(evt){
+	if(evt.keyCode == 32){
+		//menuScreen = false;
+		logoCounter++;
+	}
+}
 
 
 function onKeyDown(evt) 
@@ -342,6 +417,7 @@ function onKeyDown(evt)
 	}
 	//Spacebar pressed
 	if(evt.keyCode == 32){
+		//menuScreen = false;
 		throwPowerRod();
 		powerRodCount = powerRodCount -1;
 	}
@@ -484,290 +560,428 @@ var deathclawActive = true;
 var playerAlive = true;
 var deathSound = true;
 
+
+
 function update()
 {		
-	//Clear Canvas
-	ctx.fillStyle = "black";
-	ctx.fillRect(0, 0, stage.width, stage.height);	
+	if(menuScreen == true){
+		//Clear Canvas
+		ctx.fillStyle = "black";
+		ctx.fillRect(0, 0, stage.width, stage.height);	
 		
-	ctx.fillRect(0,0,40,40);
-	ctx.fillStyle = "#FFFFFF";
-	ctx.fillText("Speed: " + characterSpeed + "     Score: " + score + "      Fusion Cores: " + powerRodCount, 15, 15);
-	
-	//x,y,width,height
-	//ctx.fillRect(200,0,40,40);
-	//ctx.fillStyle = "#FFFFFF";
-	//ctx.fillText("Score: " + score, 15, 15);
-	
-	//Draw Image
-	//charImage = character
-	//currX = current X location on sprite
-	//currY = current Y location on canvas
-	//CharacterWidth = CharacterWidth in sprite
-	//CharacterHeight = CharacterHeight in sprite
-	//CharacterSpriteStartX = Canvas image start x location
-	//CharacterSpriteStartY = Canvas image start y location
-	//CharacterWidth = CharacterWidth on canvas
-	//CharacterHeight = CharacterHeight on canvas
-	
-	//context.drawImage(img,sx,sy,swidth,sheight,x,y,width,height);
-	//sx = x coordinate to start clipping
-	//sy = y coordinate to start clipping
-	//swidth = width of clipped image
-	//sheight = height of clipped image
-	//x = x coordinate to place on canvas
-	//y coordinate to play on canvas
-	//width of clipping on canvas
-	//height of clipping on canvas
-	
-	ctx.moveTo(350, 384);
-	ctx.lineTo(512, 192);
-	ctx.strokeStyle="green"
-	ctx.stroke();
-	
-	ctx.drawImage(charImage,deathclawSpriteX, deathclawSpriteY, deathclawWidth, deathclawHeight, 
-			deathclawCurrentX, deathclawCurrentY, deathclawWidth, deathclawHeight);
-	
-	if(deathclawActive == true){
-		moveDeathclaw();
+		//ctx.moveTo(350, 384);
+		//ctx.fillRect(500,200,40,40);
+		//ctx.stroke();
+		
+		
+		if(switchPlay == false){
+			audioPowerSwitch.play();
+			switchPlay = true;
+		}
+		
+		
+		ctx.drawImage(logoImage,currentLogoX, currentLogoY, currentLogoWidth, currentLogoHeight, 
+				130, 50, currentLogoWidth, currentLogoHeight);
+		
+		if(logoCounter == 1){
+			currentLogoY = logoY2;
+			logoCounter++;
+		}
+		else if(logoCounter == 2){
+			currentLogoY = logoY3;
+			logoCounter++;
+		}
+		else if(logoCounter == 3){
+			currentLogoY = logoY4;
+			logoCounter++;
+		}
+		else if(logoCounter == 4){
+			currentLogoY = logoY5;
+			logoCounter++;
+		}
+		else if(logoCounter == 5){
+			currentLogoY = logoY6;
+			logoCounter++;
+		}
+		else if(logoCounter == 6){
+			currentLogoY = logoY7;
+			logoCounter++;
+		}
+		else if(logoCounter == 7){
+			currentLogoY = logoY8;
+			logoCounter++;
+		}
+		else if(logoCounter == 8){
+			currentLogoY = logoY9;
+			logoCounter++;
+		}
+		else if(logoCounter == 9){
+			currentLogoY = logoY10;
+			logoCounter++;
+		}
+		else if(logoCounter == 10){
+			currentLogoY = logoY11;
+			logoCounter++;
+		}
+		else if(logoCounter == 11){
+			currentLogoY = logoY12;
+			logoCounter++;
+		}
+		else if(logoCounter == 12){
+			currentLogoY = logoY13;
+			logoCounter--;
+		}
+		else if(logoCounter == 13 || logoCounter == 15 || logoCounter == 17){
+			currentLogoY = logoY14;
+			audioGun.play();
+			logoCounter++;
+		}
+		else if(logoCounter == 14 || logoCounter == 16 || logoCounter == 18){
+			currentLogoY = logoY15;
+			audioPowerSwitch.pause();
+			logoCounter++;
+		}
+		else if(logoCounter == 19){
+			currentLogoY = logoY16;
+			currentLogoHeight = logo16Height;
+			currentLogoWidth = logo16Width;
+			logoCounter++;
+		}
+		else if(logoCounter == 20){
+			currentLogoY = logoY17;
+			currentLogoHeight = logo17Height;
+			currentLogoWidth = logo17Width;
+			logoCounter++;
+		}
+		else if(logoCounter == 21 || logoCounter == 25){ //|| logoCounter == 29){
+			currentLogoY = logoY18;
+			currentLogoHeight = logo18Height;
+			currentLogoWidth = logo18Width;
+			logoCounter++;
+		}
+		else if(logoCounter == 22 || logoCounter == 24 || logoCounter == 26 || 
+				logoCounter == 28){ //|| logoCounter == 30 || logoCounter == 32){
+			currentLogoY = logoY19;
+			currentLogoHeight = logo19Height;
+			currentLogoWidth = logo19Width;
+			logoCounter++;
+		}
+		else if(logoCounter == 23 || logoCounter == 27){// || logoCounter == 31){
+			currentLogoY = logoY20;
+			currentLogoHeight = logo20Height;
+			currentLogoWidth = logo20Width;
+			logoCounter++;
+		}
+		else if(logoCounter > 30){
+			menuScreen = false;
+			TimePerFrame = 120;
+			preloading();
+		}
+		else{
+			logoCounter++;
+		}
+		//secondCounter++;
+		
+		//if(secondCounter == 30){
+		//	logoCounter++;
+		//}
+		
+		if(logoCounter == 11 || logoCounter == 12){
+			window.addEventListener('keydown',menuStart,true);
+			ctx.fillStyle = "#FFFFFF";
+			ctx.fillText("Press SpaceBar To Play", 140 , stage.height / 1.5);
+		}
+		
+		
+		//if(evt.keyCode == 32){
+		//	menuScreen = false;
+		//}
 	}
 	else{
-		deathByDeathclaw();
-	}
-	
-	if(((deathclawCurrentX + deathclawWidth) >= (characterCurrentX)) &&
-		((deathclawCurrentX <= characterCurrentX + CharacterWidth)) &&
-		((deathclawCurrentY + deathclawHeight) >= (characterCurrentY) ) &&
-		((deathclawCurrentY <= characterCurrentY + CharacterHeight))){
-	//if(characterCurrentX == 100){
-		//audioMaybe.stop();
-		if(deathSound == true){
-			audioWilhelm.play();
-			deathSound = false;
-		}
-		deathclawActive = false;
-		playerAlive = false;
 		
-	}
-	
-	if(musicBox1Active == 1){
-		ctx.drawImage(charImage, musicBoxSpriteX, musicBoxSpriteY, musicBoxWidth, musicBoxHeight, 
-				musicBox1CurrentX, musicBox1CurrentY, musicBoxWidth, musicBoxHeight);
-	}
-	
-	if(musicBox2Active == 1){
-		ctx.drawImage(charImage, musicBoxSpriteX, musicBoxSpriteY, musicBoxWidth, musicBoxHeight, 
-				musicBox2CurrentX, musicBox2CurrentY, musicBoxWidth, musicBoxHeight);
-	}
-	
-	if(playerAlive == true)
-		moveMusicBox();
-	
-	
-	if(((musicBox1CurrentX + musicBoxWidth) >= (characterCurrentX)) && 
-			((musicBox1CurrentX <= characterCurrentX + CharacterWidth)) &&
-			((musicBox1CurrentY + musicBoxHeight) >= (characterCurrentY) ) &&
-			((musicBox1CurrentY <= characterCurrentY + CharacterHeight )) &&
-			musicBox1Active == 1){
-		//audioMaybe.play();
-		audioDream.play();
-		musicBox1Active = 2;	
-		//score = score + 500;
-	}
-	
-	if(musicBox1Active == 2)
-	{
-		musicBox1Active = 3;
-		score = score + 500;
 		
-	}
-	
-	if(((musicBox2CurrentX + musicBoxWidth) >= (characterCurrentX)) && 
-			((musicBox2CurrentX <= characterCurrentX + CharacterWidth)) &&
-			((musicBox2CurrentY + musicBoxHeight) >= (characterCurrentY) ) &&
-			((musicBox2CurrentY <= characterCurrentY + CharacterHeight )) &&
-			musicBox2Active == 1){
-		audioMaybe.play();
-		//audioDream.play();
-		musicBox2Active = 2;	
-	}
-	
-	if(musicBox2Active == 2)
-	{
-		musicBox2Active = 3;
-		score = score + 500;	
-	}
-	
-	//Want player to always be on top (at the bottom of this list)
-	if(playerAlive == true){
-		ctx.drawImage(charImage,characterSpriteX,characterSpriteY,CharacterWidth,CharacterHeight,
-					characterCurrentX,characterCurrentY,
-					CharacterWidth,CharacterHeight);
-	}
-	else{
-		ctx.drawImage(charImage, deadSpriteX, deadSpriteY, deadWidth, deadHeight, 
-				characterCurrentX, characterCurrentY, deadWidth, deadHeight);
-	}
-
-	
-	
-	
-	window.addEventListener('keydown',onKeyDown,true);
-	window.addEventListener('keyup',onKeyUp,true);
-
-	
-	//if no key pressed, move back to facing right.
-	if(playerAlive == true){
-		if(rightKeyDown == false && leftKeyDown == false &&
-				downKeyDown == false && upKeyDown == false && playerAlive == true){
-			characterFacingUpCheck = false;
-			characterFacingRightCheck = true;
-			characterFacingLeftCheck = false;
+		//Clear Canvas
+		ctx.fillStyle = "black";
+		ctx.fillRect(0, 0, stage.width, stage.height);	
+			
+		ctx.fillRect(0,0,40,40);
+		ctx.fillStyle = "#FFFFFF";
+		ctx.fillText("Speed: " + characterSpeed + "     Score: " + score + "      Fusion Cores: " + powerRodCount, 15, 15);
+		
+		//x,y,width,height
+		//ctx.fillRect(200,0,40,40);
+		//ctx.fillStyle = "#FFFFFF";
+		//ctx.fillText("Score: " + score, 15, 15);
+		
+		//Draw Image
+		//charImage = character
+		//currX = current X location on sprite
+		//currY = current Y location on canvas
+		//CharacterWidth = CharacterWidth in sprite
+		//CharacterHeight = CharacterHeight in sprite
+		//CharacterSpriteStartX = Canvas image start x location
+		//CharacterSpriteStartY = Canvas image start y location
+		//CharacterWidth = CharacterWidth on canvas
+		//CharacterHeight = CharacterHeight on canvas
+		
+		//context.drawImage(img,sx,sy,swidth,sheight,x,y,width,height);
+		//sx = x coordinate to start clipping
+		//sy = y coordinate to start clipping
+		//swidth = width of clipped image
+		//sheight = height of clipped image
+		//x = x coordinate to place on canvas
+		//y coordinate to play on canvas
+		//width of clipping on canvas
+		//height of clipping on canvas
+		
+		ctx.moveTo(350, 384);
+		ctx.lineTo(512, 192);
+		ctx.strokeStyle="green"
+		ctx.stroke();
+		
+		ctx.drawImage(charImage,deathclawSpriteX, deathclawSpriteY, deathclawWidth, deathclawHeight, 
+				deathclawCurrentX, deathclawCurrentY, deathclawWidth, deathclawHeight);
+		
+		if(deathclawActive == true){
+			moveDeathclaw();
 		}
-	
-		if(characterFacingUpCheck == true)
+		else{
+			deathByDeathclaw();
+		}
+		
+		if(((deathclawCurrentX + deathclawWidth) >= (characterCurrentX)) &&
+			((deathclawCurrentX <= characterCurrentX + CharacterWidth)) &&
+			((deathclawCurrentY + deathclawHeight) >= (characterCurrentY) ) &&
+			((deathclawCurrentY <= characterCurrentY + CharacterHeight))){
+		//if(characterCurrentX == 100){
+			//audioMaybe.stop();
+			if(deathSound == true){
+				audioWilhelm.play();
+				deathSound = false;
+			}
+			deathclawActive = false;
+			playerAlive = false;
+			
+		}
+		
+		if(musicBox1Active == 1){
+			ctx.drawImage(charImage, musicBoxSpriteX, musicBoxSpriteY, musicBoxWidth, musicBoxHeight, 
+					musicBox1CurrentX, musicBox1CurrentY, musicBoxWidth, musicBoxHeight);
+		}
+		
+		if(musicBox2Active == 1){
+			ctx.drawImage(charImage, musicBoxSpriteX, musicBoxSpriteY, musicBoxWidth, musicBoxHeight, 
+					musicBox2CurrentX, musicBox2CurrentY, musicBoxWidth, musicBoxHeight);
+		}
+		
+		if(playerAlive == true)
+			moveMusicBox();
+		
+		
+		if(((musicBox1CurrentX + musicBoxWidth) >= (characterCurrentX)) && 
+				((musicBox1CurrentX <= characterCurrentX + CharacterWidth)) &&
+				((musicBox1CurrentY + musicBoxHeight) >= (characterCurrentY) ) &&
+				((musicBox1CurrentY <= characterCurrentY + CharacterHeight )) &&
+				musicBox1Active == 1){
+			//audioMaybe.play();
+			audioDream.play();
+			musicBox1Active = 2;	
+			//score = score + 500;
+		}
+		
+		if(musicBox1Active == 2)
 		{
-			characterFacingUp();
+			musicBox1Active = 3;
+			score = score + 500;
+			
 		}
-		else if(characterFacingRightCheck == true)
+		
+		if(((musicBox2CurrentX + musicBoxWidth) >= (characterCurrentX)) && 
+				((musicBox2CurrentX <= characterCurrentX + CharacterWidth)) &&
+				((musicBox2CurrentY + musicBoxHeight) >= (characterCurrentY) ) &&
+				((musicBox2CurrentY <= characterCurrentY + CharacterHeight )) &&
+				musicBox2Active == 1){
+			audioMaybe.play();
+			//audioDream.play();
+			musicBox2Active = 2;	
+		}
+		
+		if(musicBox2Active == 2)
 		{
-			characterFacingRight();
+			musicBox2Active = 3;
+			score = score + 500;	
 		}
-		else if(characterFacingLeftCheck == true)
+		
+		//Want player to always be on top (at the bottom of this list)
+		if(playerAlive == true){
+			ctx.drawImage(charImage,characterSpriteX,characterSpriteY,CharacterWidth,CharacterHeight,
+						characterCurrentX,characterCurrentY,
+						CharacterWidth,CharacterHeight);
+		}
+		else{
+			ctx.drawImage(charImage, deadSpriteX, deadSpriteY, deadWidth, deadHeight, 
+					characterCurrentX, characterCurrentY, deadWidth, deadHeight);
+		}
+	
+		
+		
+		
+		window.addEventListener('keydown',onKeyDown,true);
+		window.addEventListener('keyup',onKeyUp,true);
+	
+		
+		//if no key pressed, move back to facing right.
+		if(playerAlive == true){
+			if(rightKeyDown == false && leftKeyDown == false &&
+					downKeyDown == false && upKeyDown == false && playerAlive == true){
+				characterFacingUpCheck = false;
+				characterFacingRightCheck = true;
+				characterFacingLeftCheck = false;
+			}
+		
+			if(characterFacingUpCheck == true)
+			{
+				characterFacingUp();
+			}
+			else if(characterFacingRightCheck == true)
+			{
+				characterFacingRight();
+			}
+			else if(characterFacingLeftCheck == true)
+			{
+				characterFacingLeft();
+			}
+		
+			if(rightKeyDown == true){
+				characterCurrentX = characterCurrentX + 5;
+			}
+			if(leftKeyDown == true){
+				characterCurrentX = characterCurrentX - 5;
+			}
+		}
+		if(playerAlive == true)
 		{
-			characterFacingLeft();
+			if(powerRod1Active == true){
+				ctx.drawImage(charImage, powerRod1CurrentSpriteX, powerRodSpriteY, powerRodWidth, powerRodHeight, 
+						powerRod1CurrentX, powerRod1CurrentY, powerRodWidth, powerRodHeight);
+				powerRod1CurrentX = powerRod1CurrentX - 5;
+				powerRod1CurrentY = powerRod1CurrentY; //- characterSpeed;
+				
+				//powerRod1CurrentSpriteX = 90;
+				if(powerRod1CurrentSpriteX == powerRodSpriteX1){
+					powerRod1CurrentSpriteX = powerRodSpriteX2;
+				}
+				
+				else if(powerRod1CurrentSpriteX == powerRodSpriteX2){
+					powerRod1CurrentSpriteX = powerRodSpriteX3;
+				}
+				else if(powerRod1CurrentSpriteX == powerRodSpriteX3){
+					powerRod1CurrentSpriteX = powerRodSpriteX4;
+				}
+				else if(powerRod1CurrentSpriteX == powerRodSpriteX4){
+					powerRod1CurrentSpriteX = powerRodSpriteX5;
+				}
+				else if(powerRod1CurrentSpriteX == powerRodSpriteX5){
+					powerRod1CurrentSpriteX = powerRodSpriteX6;
+				}
+				else if(powerRod1CurrentSpriteX == powerRodSpriteX6){
+					powerRod1CurrentSpriteX = powerRodSpriteX7;
+				}
+				else if(powerRod1CurrentSpriteX == powerRodSpriteX7){
+					powerRod1CurrentSpriteX = powerRodSpriteX8;
+				}
+				else{
+					powerRod1CurrentSpriteX = powerRodSpriteX1;
+				}
+				//Test for mushroom cloud
+				
+				if(powerRod1CurrentX == 35){
+					ctx.drawImage(charImage, cloudSpriteX3, cloudSpriteY3, cloudWidth3, cloudHeight3,
+							powerRod1CurrentX-(cloudWidth3/2), powerRod1CurrentY-cloudHeight3+30, cloudWidth3, cloudHeight3);
+				}
+				if(powerRod1CurrentX == 30){
+					ctx.drawImage(charImage, cloudSpriteX2, cloudSpriteY2, cloudWidth2, cloudHeight2,
+							powerRod1CurrentX-(cloudWidth2/2)+5, powerRod1CurrentY-cloudHeight2+30, cloudWidth2, cloudHeight2);
+				}
+				if(powerRod1CurrentX == 25){
+					ctx.drawImage(charImage, cloudSpriteX1, cloudSpriteY1, cloudWidth1, cloudHeight1,
+							powerRod1CurrentX-(cloudWidth1/2)+10, powerRod1CurrentY-cloudHeight1+30, cloudWidth1, cloudHeight1);
+				}
+				
+			}
+			if(powerRod2Active == true){
+				ctx.drawImage(charImage, powerRod2CurrentSpriteX, powerRodSpriteY, powerRodWidth, powerRodHeight, 
+						powerRod2CurrentX, powerRod2CurrentY, powerRodWidth, powerRodHeight);
+				powerRod2CurrentX = powerRod2CurrentX - 5;
+				powerRod2CurrentY = powerRod2CurrentY;// - characterSpeed;
+				
+				if(powerRod2CurrentSpriteX == powerRodSpriteX1){
+					powerRod2CurrentSpriteX = powerRodSpriteX2;
+				}
+				else if(powerRod2CurrentSpriteX == powerRodSpriteX2){
+					powerRod2CurrentSpriteX = powerRodSpriteX3;
+				}
+				else if(powerRod2CurrentSpriteX == powerRodSpriteX3){
+					powerRod2CurrentSpriteX = powerRodSpriteX4;
+				}
+				else if(powerRod2CurrentSpriteX == powerRodSpriteX4){
+					powerRod2CurrentSpriteX = powerRodSpriteX5;
+				}
+				else if(powerRod2CurrentSpriteX == powerRodSpriteX5){
+					powerRod2CurrentSpriteX = powerRodSpriteX6;
+				}
+				else if(powerRod2CurrentSpriteX == powerRodSpriteX6){
+					powerRod2CurrentSpriteX = powerRodSpriteX7;
+				}
+				else if(powerRod2CurrentSpriteX == powerRodSpriteX7){
+					powerRod2CurrentSpriteX = powerRodSpriteX8;
+				}
+				else{
+					powerRod2CurrentSpriteX = powerRodSpriteX1;
+				}    
+			}
+			if(powerRod3Active == true){
+				ctx.drawImage(charImage, powerRod3CurrentSpriteX, powerRodSpriteY, powerRodWidth, powerRodHeight, 
+						powerRod3CurrentX, powerRod3CurrentY, powerRodWidth, powerRodHeight);
+				powerRod3CurrentX = powerRod3CurrentX - 5;
+				powerRod3CurrentY = powerRod3CurrentY;// - characterSpeed;
+				
+				if(powerRod3CurrentSpriteX == powerRodSpriteX1){
+					powerRod3CurrentSpriteX = powerRodSpriteX2;
+				}
+				else if(powerRod3CurrentSpriteX == powerRodSpriteX2){
+					powerRod3CurrentSpriteX = powerRodSpriteX3;
+				}
+				else if(powerRod3CurrentSpriteX == powerRodSpriteX3){
+					powerRod3CurrentSpriteX = powerRodSpriteX4;
+				}
+				else if(powerRod3CurrentSpriteX == powerRodSpriteX4){
+					powerRod3CurrentSpriteX = powerRodSpriteX5;
+				}
+				else if(powerRod3CurrentSpriteX == powerRodSpriteX5){
+					powerRod3CurrentSpriteX = powerRodSpriteX6;
+				}
+				else if(powerRod3CurrentSpriteX == powerRodSpriteX6){
+					powerRod3CurrentSpriteX = powerRodSpriteX7;
+				}
+				else if(powerRod3CurrentSpriteX == powerRodSpriteX7){
+					powerRod3CurrentSpriteX = powerRodSpriteX8;
+				}
+				else{
+					powerRod3CurrentSpriteX = powerRodSpriteX1;
+				}    
+			}
 		}
-	
-		if(rightKeyDown == true){
-			characterCurrentX = characterCurrentX + 5;
-		}
-		if(leftKeyDown == true){
-			characterCurrentX = characterCurrentX - 5;
-		}
+		
+		
+		//if(upKeyDown == true){
+		//	characterCurrentY = characterCurrentY - 4;
+		//}
+		//if(downKeyDown == true){
+		//	characterCurrentY = characterCurrentY + 4;
+		//}
 	}
-	if(playerAlive == true)
-	{
-		if(powerRod1Active == true){
-			ctx.drawImage(charImage, powerRod1CurrentSpriteX, powerRodSpriteY, powerRodWidth, powerRodHeight, 
-					powerRod1CurrentX, powerRod1CurrentY, powerRodWidth, powerRodHeight);
-			powerRod1CurrentX = powerRod1CurrentX - 5;
-			powerRod1CurrentY = powerRod1CurrentY; //- characterSpeed;
-			
-			//powerRod1CurrentSpriteX = 90;
-			if(powerRod1CurrentSpriteX == powerRodSpriteX1){
-				powerRod1CurrentSpriteX = powerRodSpriteX2;
-			}
-			
-			else if(powerRod1CurrentSpriteX == powerRodSpriteX2){
-				powerRod1CurrentSpriteX = powerRodSpriteX3;
-			}
-			else if(powerRod1CurrentSpriteX == powerRodSpriteX3){
-				powerRod1CurrentSpriteX = powerRodSpriteX4;
-			}
-			else if(powerRod1CurrentSpriteX == powerRodSpriteX4){
-				powerRod1CurrentSpriteX = powerRodSpriteX5;
-			}
-			else if(powerRod1CurrentSpriteX == powerRodSpriteX5){
-				powerRod1CurrentSpriteX = powerRodSpriteX6;
-			}
-			else if(powerRod1CurrentSpriteX == powerRodSpriteX6){
-				powerRod1CurrentSpriteX = powerRodSpriteX7;
-			}
-			else if(powerRod1CurrentSpriteX == powerRodSpriteX7){
-				powerRod1CurrentSpriteX = powerRodSpriteX8;
-			}
-			else{
-				powerRod1CurrentSpriteX = powerRodSpriteX1;
-			}
-			//Test for mushroom cloud
-			
-			if(powerRod1CurrentX == 35){
-				ctx.drawImage(charImage, cloudSpriteX3, cloudSpriteY3, cloudWidth3, cloudHeight3,
-						powerRod1CurrentX-(cloudWidth3/2), powerRod1CurrentY-cloudHeight3+30, cloudWidth3, cloudHeight3);
-			}
-			if(powerRod1CurrentX == 30){
-				ctx.drawImage(charImage, cloudSpriteX2, cloudSpriteY2, cloudWidth2, cloudHeight2,
-						powerRod1CurrentX-(cloudWidth2/2)+5, powerRod1CurrentY-cloudHeight2+30, cloudWidth2, cloudHeight2);
-			}
-			if(powerRod1CurrentX == 25){
-				ctx.drawImage(charImage, cloudSpriteX1, cloudSpriteY1, cloudWidth1, cloudHeight1,
-						powerRod1CurrentX-(cloudWidth1/2)+10, powerRod1CurrentY-cloudHeight1+30, cloudWidth1, cloudHeight1);
-			}
-			
-		}
-		if(powerRod2Active == true){
-			ctx.drawImage(charImage, powerRod2CurrentSpriteX, powerRodSpriteY, powerRodWidth, powerRodHeight, 
-					powerRod2CurrentX, powerRod2CurrentY, powerRodWidth, powerRodHeight);
-			powerRod2CurrentX = powerRod2CurrentX - 5;
-			powerRod2CurrentY = powerRod2CurrentY;// - characterSpeed;
-			
-			if(powerRod2CurrentSpriteX == powerRodSpriteX1){
-				powerRod2CurrentSpriteX = powerRodSpriteX2;
-			}
-			else if(powerRod2CurrentSpriteX == powerRodSpriteX2){
-				powerRod2CurrentSpriteX = powerRodSpriteX3;
-			}
-			else if(powerRod2CurrentSpriteX == powerRodSpriteX3){
-				powerRod2CurrentSpriteX = powerRodSpriteX4;
-			}
-			else if(powerRod2CurrentSpriteX == powerRodSpriteX4){
-				powerRod2CurrentSpriteX = powerRodSpriteX5;
-			}
-			else if(powerRod2CurrentSpriteX == powerRodSpriteX5){
-				powerRod2CurrentSpriteX = powerRodSpriteX6;
-			}
-			else if(powerRod2CurrentSpriteX == powerRodSpriteX6){
-				powerRod2CurrentSpriteX = powerRodSpriteX7;
-			}
-			else if(powerRod2CurrentSpriteX == powerRodSpriteX7){
-				powerRod2CurrentSpriteX = powerRodSpriteX8;
-			}
-			else{
-				powerRod2CurrentSpriteX = powerRodSpriteX1;
-			}    
-		}
-		if(powerRod3Active == true){
-			ctx.drawImage(charImage, powerRod3CurrentSpriteX, powerRodSpriteY, powerRodWidth, powerRodHeight, 
-					powerRod3CurrentX, powerRod3CurrentY, powerRodWidth, powerRodHeight);
-			powerRod3CurrentX = powerRod3CurrentX - 5;
-			powerRod3CurrentY = powerRod3CurrentY;// - characterSpeed;
-			
-			if(powerRod3CurrentSpriteX == powerRodSpriteX1){
-				powerRod3CurrentSpriteX = powerRodSpriteX2;
-			}
-			else if(powerRod3CurrentSpriteX == powerRodSpriteX2){
-				powerRod3CurrentSpriteX = powerRodSpriteX3;
-			}
-			else if(powerRod3CurrentSpriteX == powerRodSpriteX3){
-				powerRod3CurrentSpriteX = powerRodSpriteX4;
-			}
-			else if(powerRod3CurrentSpriteX == powerRodSpriteX4){
-				powerRod3CurrentSpriteX = powerRodSpriteX5;
-			}
-			else if(powerRod3CurrentSpriteX == powerRodSpriteX5){
-				powerRod3CurrentSpriteX = powerRodSpriteX6;
-			}
-			else if(powerRod3CurrentSpriteX == powerRodSpriteX6){
-				powerRod3CurrentSpriteX = powerRodSpriteX7;
-			}
-			else if(powerRod3CurrentSpriteX == powerRodSpriteX7){
-				powerRod3CurrentSpriteX = powerRodSpriteX8;
-			}
-			else{
-				powerRod3CurrentSpriteX = powerRodSpriteX1;
-			}    
-		}
-	}
-	
-	
-	//if(upKeyDown == true){
-	//	characterCurrentY = characterCurrentY - 4;
-	//}
-	//if(downKeyDown == true){
-	//	characterCurrentY = characterCurrentY + 4;
-	//}
-	
-	
+		
 }
 
 
